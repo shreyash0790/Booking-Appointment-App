@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Booking App </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  </head>
+  <body class="text-center">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#"><b>Appointment Booking </b> </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+            </ul>
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+      <section class="vh-100">
+        <div class="container-fluid h-custom">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-9 col-lg-6 col-xl-5">
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                class="img-fluid" alt="Sample image">
+            </div>
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+              <form id="my-form">
+                <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
+                  <h1 class="container text-center my-3 text-primary">Enter your  Details</h1>
+                  
+                </div>
+      
+                <!-- username -->
+                <div class="form-outline mb-4">
+                  <input type="text" id="username" class="form-control form-control-lg"
+                    placeholder="Enter your Username " />
+                  <label class="form-label" for="username"></label>
+                </div>
+      
+                <!-- phone number  -->
+                <div class="form-outline mb-3 my-0">
+                  <input type="number" id="phone" class="form-control form-control-lg"
+                    placeholder="Enter Your Phone number " />
+                  <label class="form-label" for="phone"></label>
+                </div>
+                <!-- Email -->
+                <div class="form-outline mb-3 my-0">
+                    <input type="email" id="email" class="form-control form-control-lg"
+                      placeholder="Enter Your Email" />
+                    <label class="form-label" for="email"></label>
+                  </div>
+            
+      
+                <div class="text-center text-lg-start mt-4 pt-2">
+                  <button type="submit" class="btn btn-primary btn-lg "
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Book your Call</button>
+                </div>
+               
+      
+              </form>
+              <div class="list-container">
+              <h3 class="list-title  text-primary">Booking  List</h3>
+              <ul class="list-group" id="users">
+                <li class="list-group-item"></li>
+                
+              </ul>
+            </div>
+            </div>
+          </div>
+        </div>
+      
+        </div>
+      </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>// JavaScript code for the frontend interactions
+      const myForm = document.querySelector('#my-form');
+      const usernameInput = document.querySelector('#username');
+      const phoneInput = document.querySelector('#phone');
+      const emailInput = document.querySelector('#email');
+      const userList = document.querySelector('#users');
+      
+      // Listen for form submit
+      myForm.addEventListener('submit', onSubmit);
+      
+      function onSubmit(e) {
+        e.preventDefault();
+        console.log('Form submitted!'); 
+        const username = usernameInput.value;
+        const phone = phoneInput.value;
+        const email = emailInput.value;
+      
+        if (username === '' || phone === '' || email === '') {
+          alert('Please input all fields');
+        } else {
+          const formData = { Username: username, PhoneNumber: phone, Email: email };
+          postFormData(formData);
+        }
+      }
+      
+      async function postFormData(formData) {
+        try {
+          const response = await axios.post('http://localhost:4000/AddUser', formData);
+          const newUser = response.data.appointment;
+          createListItem(newUser); // Create and append list item for the newly added user
+          clearFields(); // Clear input fields
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      
+      function createListItem(appointment) {
+        // Create the list item element and add it to the userList
+        // (similar to the createListItem function in the previous response)
+      
+        // Example:
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.appendChild(
+          document.createTextNode(
+            `${appointment.Username} => ${appointment.PhoneNumber} || ${appointment.Email}`
+          )
+        );
+      
+       // Create delete button
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'btn btn-danger btn-sm float-end';
+  deleteBtn.appendChild(document.createTextNode('Delete'));
+
+  // Create edit button
+  const editBtn = document.createElement('button');
+  editBtn.className = 'btn btn-warning btn-sm float-end';
+  editBtn.appendChild(document.createTextNode('Edit'));
+
+  // Append buttons to list item
+  li.appendChild(deleteBtn);
+  li.appendChild(editBtn);
+      
+        // Append the list item to the userList
+        userList.appendChild(li);
+      }
+      
+      function clearFields() {
+        usernameInput.value = '';
+        phoneInput.value = '';
+        emailInput.value = '';
+      }
+      
+      // Fetch initial data from the server and display it on the frontend
+      window.addEventListener('DOMContentLoaded', async () => {
+        try {
+          const response = await axios.get('http://localhost:4000/GetUser');
+          const appointments = response.data.appointments;
+      
+          // Clear the user list
+          userList.innerHTML = '';
+      
+          // Iterate over each appointment and create list items
+          for (const appointment of appointments) {
+            createListItem(appointment);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }); </script>
+  </body>
+</html>
